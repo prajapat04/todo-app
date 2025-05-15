@@ -41,7 +41,7 @@ function addTask(){
     return;
    }
 
-   tasks.push(task);
+   tasks.push({task, completed : false});
    input.value = "";
    saveTasks();
    displayTasks();
@@ -66,13 +66,37 @@ function addTask(){
         const li = document.createElement("li");
         li.innerText = task;
         
+        if(task.completed) {
+           li.style.textDecoration = "line-through";
+           li.style.color = "gray";
+        }
+        li.onclick = () => {
+            tasks[index].completed = !tasks[index].completed;
+            saveTasks();
+            displayTasks();
+        };
+
         const completeTask = document.createElement("button");
-        completeTask.innerText = "Complete";
-        completeTask.onclick = () => completeTask(index);
+        completeTask.innerText = "✔️";
+        completeTask.onclick = (e) => {
+            e.stopPropagation();
+            tasks[index].completed = !tasks[index].completed;
+            saveTasks();
+            displayTasks();
+        };
+        
+        const editTask = document.createElement("button");
+        editTask.innerText = "Edit";
+        editTask.onclick = (e) => {
+            e.stopPropagation();
+            editTask(index);
+        }
+        
         const deleteBtn = document.createElement("button");
         deleteBtn.innerText = "🗑️";
         deleteBtn.onclick = () => confirmDelete(index);
         li.appendChild(completeTask);
+        li.appendChild(editTask);
         li.appendChild(deleteBtn);
         list.appendChild(li);
         
@@ -85,7 +109,44 @@ function addTask(){
      if(result){
         deleteTask(index);
      }
-   }
+   };
+
+   let editingIndex = null;
+
+    function editTask(index) {
+        const task = tasks[index];
+         document.getElementById("input-task").value = tasks[index].text;
+         editingIndex = index;
+
+         const addBtn = document.getElementById("add-task");
+         addBtn.innerText = "Update";
+         addBtn.onclick = updateTask;
+    };
+
+    function updateTask(index) {
+        const input = document.getElementById("input-task");
+        const newText = input.value.trim();
+
+
+        if(newText === "") return;
+        tasks[editingIndex].text = newText;
+        editingIndex = null;
+        input.value = "";
+
+        const btn = document.getElementById("add-task");
+        btn.innerText = "add task";
+        btn.onclick = addTask;
+
+        alert("Contect updated sucessfully.");
+        saveTasks();
+        displayTasks();
+
+
+    }
+
+    function resetForm(){
+        document.getElementById("input-task").value = "";
+    }
 
 
 

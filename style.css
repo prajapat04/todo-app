@@ -99,3 +99,8 @@ body.dark-mode button:hover {
     color: white;
     border: 2px solid yellow;
   }
+
+  .completed {
+  text-decoration: line-through;
+  color: gray;
+}
